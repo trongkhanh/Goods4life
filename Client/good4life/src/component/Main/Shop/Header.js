@@ -15,12 +15,12 @@ export default class Header extends Component {
                     <TouchableOpacity onPress={this.props.onOpen}>
                         <Image source={icMenu} style={iconStyle} />
                     </TouchableOpacity>
-                    <Text style={titleStyle}>Fresh Food</Text>
+                    <Text style={titleStyle}>Thực phẩm sạch</Text>
                     <Image source={icLogo} style={iconStyle} />
                 </View>
                 <TextInput 
                     style={textInput}
-                    placeholder="What do you want to buy?"
+                    placeholder="Bạn muốn mua gì?"
                     underlineColorAndroid="transparent" 
                 />
             </View>

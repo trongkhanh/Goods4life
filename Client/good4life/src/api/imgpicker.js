@@ -27,6 +27,7 @@ let pick = (cb)=>{
           // You can also display the image using data:
           // let source = { uri: 'data:image/jpeg;base64,' + response.data };
           cb(source, response.data); //cb la function call back truyen vao doi so source
+          console.log(response.data);
         }
       });
 }

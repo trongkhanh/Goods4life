@@ -3,7 +3,7 @@ import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity  } from 're
 import Swiper from 'react-native-swiper';
 
 const { width, height } = Dimensions.get('window');
-const url = 'http://192.168.1.155:8080/api/images/type/';
+const url = 'http://192.168.1.10:8080/local-server/data/product_info/';
 
 export default class Category extends Component {
 
@@ -18,14 +18,15 @@ export default class Category extends Component {
         return (
             <View style={wrapper}>
                 <View style={{ justifyContent: 'center', height: 50 }}>
-                    <Text style={textStyle} >LIST OF CATEGORY</Text>
+                    <Text style={textStyle} >Danh sách sản phẩm</Text>
                 </View>
                 <View style={{ justifyContent: 'flex-end', flex: 4 }}>
-                    <Swiper showsPagination width={imageWidth} height={imageHeight} >
+                    <Swiper showsPagination width={imageWidth} height={imageHeight} 
+                            autoplay={true} autoplayTimeout={3}>
                     {types.map(e=>(
-                        <TouchableOpacity onPress={this.gotoListProduct.bind(this)} key={e.id}>
-                        <Image source={{uri: `${url}${e.image}`}} style={imageStyle}>
-                            <Text style={cateTitle}>{e.name}</Text>
+                        <TouchableOpacity onPress={this.gotoListProduct.bind(this)} key={e.itemNo}>
+                        <Image source={{uri: (url+e.imageName+'.jpg')}} style={imageStyle}>
+                            <Text style={cateTitle}>{e.itemSubject}</Text>
                         </Image>
                     </TouchableOpacity>
                     ))}

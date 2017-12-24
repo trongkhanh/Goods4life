@@ -5,8 +5,11 @@ import {LoginButton, AccessToken, LoginManager, ShareDialog, GraphRequest,
 
 import signIn from '../../api/signIn';
 import global from '../global';
+import validateEmail from '../../api/validateEmail';
+import validatePhoneNumber from '../../api/validatePhoneNumber';
+import checkPassword from '../../api/checkPassword';
 
-//import saveToken from '../../api/saveToken';
+import saveToken from '../../api/saveToken';
 
 export default class SignIn extends Component {
     constructor(props) {
@@ -96,16 +99,28 @@ export default class SignIn extends Component {
         const ws = signIn();
         ws.onopen = () => {
             // connection opened
-            ws.send(JSON.stringify({Mail: user, PassWord: password})); // send a message
-          };
+            if(checkPassword(password)){
+                if(validateEmail(user)){
+                   ws.send(JSON.stringify({data: {Email: user, PassWord: password}, typeSignIn:7}));
+                 }else if(validatePhoneNumber(user)){
+                   ws.send(JSON.stringify({data: {PhoneNumber: user, PassWord: password}, typeSignIn:8}));
+                 }else{
+                     alert('Bạn nhập sai tên đăng nhập!');
+                 }
+            }else{
+                alert('Mật khẩu phải có từ 7 đến 20 ký tự chỉ chứa chữ cái, số, gạch dưới và ký tự đầu tiên phải là chữ cái');
+            }
+           
+         };
           
           ws.onmessage = (e) => {
             // a message was received
             console.log("messsage: " + e.data);
-            if(e.data == 200){
+            json = JSON.parse(e.data)
+            if(json.code == 200){
                 global.onSignIn(user);
                 this.props.goBackToMain();
-               // saveToken(res.token);
+                saveToken(json.jwt);
             }
           };
           
@@ -118,18 +133,11 @@ export default class SignIn extends Component {
             // connection closed
             console.log(e.code, e.reason);
           };
-        // signIn(user, password)
-        //     .then(res => {
-        //         global.onSignIn(res.user);
-        //         this.props.goBackToMain();
-        //         saveToken(res.token);
-        //     })
-        //     .catch(err => console.log(err));
     }
 
     gotoForgotPW(){
         const { navigator } = this.props;
-        navigator.push('FORGOTPW');
+        navigator.push({name: 'FORGOTPW'});
     }
 
     render() {
@@ -139,7 +147,7 @@ export default class SignIn extends Component {
             <View>
                 <TextInput
                     style={inputStyle}
-                    placeholder="Enter your userName"
+                    placeholder="Nhập vào email/phone"
                     value={user}
                     onChangeText={text => this.setState({ user: text })}
                     underlineColorAndroid='transparent'
@@ -149,7 +157,7 @@ export default class SignIn extends Component {
                 />
                 <TextInput
                     style={inputStyle}
-                    placeholder="Enter your password"
+                    placeholder="Nhập vào mật khẩu"
                     value={password}
                     onChangeText={text => this.setState({ password: text })}
                     secureTextEntry
@@ -158,19 +166,19 @@ export default class SignIn extends Component {
                 />
 
                 <TouchableOpacity style={bigButton} onPress={this.onSignInFB.bind(this)}>
-                    <Text style={buttonText}>SIGN IN FACEBOOK</Text>
+                    <Text style={buttonText}>Đăng nhập bằng facebook</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={bigButton} onPress={this.shareLinkWithShareDialog.bind(this)}>
+                {/* <TouchableOpacity style={bigButton} onPress={this.shareLinkWithShareDialog.bind(this)}>
                     <Text style={buttonText}>SHARE LINK WITH FACEBOOK</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
                 <TouchableOpacity style={bigButton} onPress={this.onSignIn.bind(this)}>
-                    <Text style={buttonText}>SIGN IN NOW</Text>
+                    <Text style={buttonText}>Đăng nhập ngay</Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.textContainer} onPress={this.gotoForgotPW.bind(this)}>
-                                <Text style={styles.text}>Forgot password?</Text>
+                                <Text style={styles.text}>Quên mật khẩu?</Text>
                 </TouchableOpacity>
 
             </View>

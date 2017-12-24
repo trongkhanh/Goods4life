@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, ListView } from 'react-native';
 
-const url = 'http://192.168.1.155:8080/api/images/product/';
+const url = 'http://192.168.1.10:8080/api/images/product/';
 
 export default class TopProduct extends Component {
 
@@ -22,9 +22,9 @@ export default class TopProduct extends Component {
         return (
             <View style={container}>
                 <View style={titleContainer}>
-                    <Text style={title}>TOP PRODUCT</Text>
+                    <Text style={title}>Sản phẩm bán chạy</Text>
                 </View>
-                <ListView 
+                {/* <ListView 
                     contentContainerStyle={body}
                     enableEmptySections
                     dataSource={new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 }).cloneWithRows(topProducts)}
@@ -39,7 +39,7 @@ export default class TopProduct extends Component {
                         if (rowId % 2 === 1) return <View style={{ width, height: 10 }} />;
                         return null;
                     }}
-                />
+                /> */}
 
             </View>
         );

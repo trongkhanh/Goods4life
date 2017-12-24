@@ -7,6 +7,7 @@ import {
 import profileIcon from '../../media/temp/profile.png';
 import global from '../global';
 import {LoginManager} from 'react-native-fbsdk';
+import saveToken from '../../api/saveToken';
 
 class Menu extends Component {
     constructor(props) {
@@ -21,6 +22,7 @@ class Menu extends Component {
 
     onSignOut() {
         this.setState({user : null});
+        saveToken('');
         LoginManager.logOut();
     }
 
@@ -46,7 +48,7 @@ class Menu extends Component {
         const logoutJSX = (
             <View style={{ flex: 1 }}>
                 <TouchableOpacity style={btnStyle} onPress={this.gotoAuthentication.bind(this)}>
-                    <Text style={btnText}>Sign In</Text>
+                    <Text style={btnText}>Đăng nhập</Text>
                 </TouchableOpacity>
             </View>
         );
@@ -55,13 +57,13 @@ class Menu extends Component {
                 <Text style={username}>{user? user : ''}</Text>
                 <View>
                     <TouchableOpacity style={btnSignInStyle} onPress={this.gotoOrderHistory.bind(this)}>
-                        <Text style={btnTextSignIn}>Order History</Text>
+                        <Text style={btnTextSignIn}>Nhật ký mua hàng</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={btnSignInStyle} onPress={this.gotoChangeInfo.bind(this)}>
-                        <Text style={btnTextSignIn}>Change Info</Text>
+                        <Text style={btnTextSignIn}>Cập nhật thông tin</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={btnSignInStyle} onPress={this.onSignOut.bind(this)}>
-                        <Text style={btnTextSignIn}>Sign out</Text>
+                        <Text style={btnTextSignIn}>Đăng xuất</Text>
                     </TouchableOpacity>
                 </View>
                 <View />
@@ -102,7 +104,7 @@ const styles = StyleSheet.create({
     btnText: {
         color: '#34B089',
         fontFamily: 'Avenir', 
-        fontSize: 20
+        fontSize: 18
     },
     btnSignInStyle: {
         height: 50,

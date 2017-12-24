@@ -16,7 +16,7 @@ class Purchase extends Component {
         return (
             <View style={wrapper}>
                 <View style={mapContainer}>
-                    <MapView
+                    {/* <MapView
                         style={{ width: width - 20, height: 250 }}
                         initialRegion={{
                             latitude: 0.00,
@@ -30,7 +30,7 @@ class Purchase extends Component {
                             title="Lai Dong"
                             description="Good for my Life"
                         />
-                    </MapView>
+                    </MapView> */}
                 </View>
                 <View style={infoContainer}>
                     <View style={rowInfoContainer}>

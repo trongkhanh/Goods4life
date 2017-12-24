@@ -1,29 +1,25 @@
 import React, { Component } from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,TouchableOpacity
-} from 'react-native';
+import { Navigator } from 'react-native';
+import NavigationExperimental from 'react-native-deprecated-custom-components';
 
-import ScrollableTabView, {DefaultTabBar} from 'react-native-scrollable-tab-view';
-import Purchase from './Purchase';
-import Sell from './Sell';
+import ContactView from './ContactView';
+import RegisterSell from './RegisterSell';
 
 class Contact extends Component {
-  render() {
-    return (
-      <ScrollableTabView
-        style={{backgroundColor: '#fff', }}
-        renderTabBar={() => <DefaultTabBar />}
-        tabBarUnderlineStyle = {{backgroundColor: '#34B089'}}
-        tabBarTextStyle = {{fontFamily: 'Avenir', fontSize: 14}}
-      >
-        <Purchase tabLabel="Purchase" />
-        <Sell tabLabel="Sell" />
-      </ScrollableTabView>
-    );
-  }
+    render() {
+        const {types, topProducts} = this.props;
+        return (
+            <NavigationExperimental.Navigator
+                initialRoute={{ name: 'CONTACT_VIEW' }}
+                renderScene={(route, navigator) => {
+                    switch (route.name) {
+                        case 'CONTACT_VIEW': return <ContactView navigator={navigator} types ={types} topProducts={topProducts}/>;
+                        default: return <RegisterSell navigator={navigator} product={route.product}/>;
+                    }
+                }}
+            />
+        );
+    }
 }
 
 export default Contact;

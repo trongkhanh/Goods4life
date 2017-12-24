@@ -36,25 +36,25 @@ export default class ChangeInfo extends Component {
                 <View style={body}>
                     <TextInput
                         style={textInput}
-                        placeholder="Enter your name"
+                        placeholder="Nhập tên"
                         autoCapitalize="none"
-                        value={name}
+                        value={this.state.txtName}
                         onChangeText={txtName => this.setState({ ...this.state, txtName })}
                         underlineColorAndroid="transparent"
                     />
                     <TextInput
                         style={textInput}
-                        placeholder="Enter your address"
+                        placeholder="Nhập địa chỉ"
                         autoCapitalize="none"
-                        value={address}
+                        value={this.state.txtAddress}
                         onChangeText={txtAddress => this.setState({ ...this.state, txtAddress })}
                         underlineColorAndroid="transparent"
                     />
                     <TextInput
                         style={textInput}
-                        placeholder="Enter your phone number"
+                        placeholder="Nhập số điện thoại"
                         autoCapitalize="none"
-                        value={phone}
+                        value={this.state.txtPhone}
                         onChangeText={txtPhone => this.setState({ ...this.state, txtPhone })}
                         underlineColorAndroid="transparent"
                     />

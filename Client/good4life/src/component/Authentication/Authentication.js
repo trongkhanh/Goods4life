@@ -40,23 +40,23 @@ export default class Authentication extends Component {
 
         const { isSignIn } = this.state;
         const { navigator } = this.props;
-        const mainJSX = isSignIn ? <SignIn goBackToMain={this.goBackToMain.bind(this)} navigator={navigator} /> : <SignUp gotoSignIn={this.gotoSignIn.bind(this)} />;
+        const mainJSX = isSignIn ? <SignIn goBackToMain={this.goBackToMain.bind(this)} navigator={navigator} /> : <SignUp gotoSignIn={this.gotoSignIn.bind(this)} navigator={navigator}/>;
         return (
             <View style={container}>
                 <View style={row1}>
                     <TouchableOpacity onPress={this.goBackToMain.bind(this)}>
                         <Image source={icBack} style={iconStyle} />
                     </TouchableOpacity>
-                    <Text style={titleStyle}>Fresh Food</Text>
+                    <Text style={titleStyle}>Thực phẩm sạch</Text>
                     <Image source={icLogo} style={iconStyle} />
                 </View>
                 {mainJSX}
                 <View style={controlStyle}>
                     <TouchableOpacity style={signInStyle} onPress={this.signIn.bind(this)}>
-                        <Text style={isSignIn ? activeStyle : inactiveStyle}>SIGN IN</Text>
+                        <Text style={isSignIn ? activeStyle : inactiveStyle}>Đăng nhập</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={signUpStyle} onPress={this.signUp.bind(this)}>
-                        <Text style={!isSignIn ? activeStyle : inactiveStyle}>SIGN UP</Text>
+                        <Text style={!isSignIn ? activeStyle : inactiveStyle}>Đăng ký</Text>
                     </TouchableOpacity>
                 </View>
             </View>

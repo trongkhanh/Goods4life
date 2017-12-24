@@ -10,7 +10,7 @@ export default class Collection extends Component {
         return (
             <View style={wrapper}>
                 <View style={{ height: 50, justifyContent: 'center' }}>
-                    <Text style={textStyle} >FRUIT&VEGETABLES COLLECTION</Text>
+                    <Text style={textStyle} >Rau củ quả sạch ưa chuộng</Text>
                 </View>
                 <TouchableOpacity  style={{ flex: 4, justifyContent: 'flex-end' }}>
                     <Image source={bannerImage} style={imageStyle} />

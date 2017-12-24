@@ -19,6 +19,11 @@ export default class Sell extends Component {
         pick((source, data) => this.setState({avatarSource: source, data}));
     }
 
+    gotoRegisterSell(){
+        const { navigator } = this.props;
+        navigator.push({name: 'REGISTER_SELL'});
+    }
+
     render() {
         let img = this.state.avatarSource==null? null:
         <Image 
@@ -27,9 +32,16 @@ export default class Sell extends Component {
         />
         return (
             <View style={styles.container}>
+
+                    <TouchableOpacity style={styles.wrapper} onPress={this.gotoRegisterSell.bind(this)}>
+                        <Text />
+                        <Text style={styles.textInput}>Đăng ký bán hàng</Text>
+                        <Image source ={backIcon} style={styles.iconStyle}/>
+                    </TouchableOpacity>
+
                     <TouchableOpacity style={styles.wrapper} onPress={this.show.bind(this)}>
                         <Image source ={addProductIcon} style={styles.iconStyle}/>
-                        <Text style={styles.textInput}>Post new product</Text>
+                        <Text style={styles.textInput}>Đăng sản phẩm mới</Text>
                         <Image source ={backIcon} style={styles.iconStyle}/>
                     </TouchableOpacity>
                     {img}

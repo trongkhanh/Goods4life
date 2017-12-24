@@ -1,35 +1,31 @@
 import React, { Component } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import register from '../../api/register';
+import validateEmail from '../../api/validateEmail';
+import validatePhoneNumber from '../../api/validatePhoneNumber';
+import checkPassword from '../../api/checkPassword';
 
 export default class SignUp extends Component {
     constructor(props) {
         super(props);
         this.state = {
             username: '',
-            email: '',
-            phone: '',
+            email_phone: '',
             addr: '',
             password: '',
             repassword: ''
         };
     }
 
-    onSuccess() {
-        Alert.alert(
-            'Notice',
-            'Sign up successfully',
-            [
-                { text: 'OK', onPress: this.props.gotoSignIn() }
-            ],
-            { cancelable: false }
-        );
+    onSuccess(code) {
+        const { navigator } = this.props;
+        navigator.push({name: 'VERICATION_MAIL', code});
     }
 
     onFail() {
         Alert.alert(
             'Notice',
-            'Register fail',
+            'Kiểm tra lại kết nối mạng',
             [
                  { text: 'OK', onPress: () => this.removeEmail.bind(this) }
             ],
@@ -42,17 +38,36 @@ export default class SignUp extends Component {
     }
 
     registerUser() {
-        const { username, password, phone, email, addr } = this.state;
+        const { username, password, email_phone, addr, repassword } = this.state;
         const ws = register();
+        if(!validateEmail(email_phone) && !validatePhoneNumber(email_phone)){
+            alert('Email/phone không hợp lệ!');
+            return;
+        }
+
+        if(!checkPassword(password)){
+            alert('Mật khẩu phải có từ 7 đến 20 ký tự chỉ chứa chữ cái, số, gạch dưới và ký tự đầu tiên phải là chữ cái');
+            return;
+        }
+
+        if(password != repassword){
+            alert('Mật khẩu không khớp');
+            return;
+        }
+                    
         ws.onopen = () => {
             // connection opened
-            ws.send(JSON.stringify({UserName: username, PassWord: password, PhoneNumber: phone, Mail: email, Address: addr})); // send a message
+            if(validateEmail(email_phone))
+                ws.send(JSON.stringify({UserName: username, PassWord: password, Email: email_phone, AccountType: 1}));
+            else if(validatePhoneNumber(email_phone))
+                ws.send(JSON.stringify({UserName: username, PassWord: password, PhoneNumber: email_phone, AccountType: 1}));
         };
           
         ws.onmessage = (e) => {
             // a message was received
             console.log("messsage: " + e.data);
-            if(e.data==200) return this.onSuccess();
+            json = JSON.parse(e.data)
+            if(json.code == 200) return this.onSuccess(json.ConfirmCode);
             this.onFail();
         };
         
@@ -75,34 +90,34 @@ export default class SignUp extends Component {
             <View>
                 <TextInput 
                     style={inputStyle} 
-                    placeholder="Enter your username" 
+                    placeholder="(*) Nhập tên ..." 
                     value={this.state.username}
                     onChangeText={text => this.setState({ username: text })}
                     underlineColorAndroid='transparent'
                     returnKeyType="next"
-                    onSubmitEditing={()=> this.emailInput.focus()}
+                    onSubmitEditing={()=> this.phonemailInput.focus()}
                 />
-                <TextInput 
+                {/* <TextInput 
                     style={inputStyle} 
-                    placeholder="Enter your email" 
+                    placeholder="Nhập email ..." 
                     value={this.state.email}
                     onChangeText={text => this.setState({ email: text })}
                     returnKeyType="go"
                     ref={(input) => this.emailInput=input}
                     onSubmitEditing={()=> this.phoneInput.focus()}
-                />
+                /> */}
                 <TextInput 
                     style={inputStyle} 
-                    placeholder="Enter your phone number" 
-                    value={this.state.phone}
-                    onChangeText={text => this.setState({ phone: text })}
+                    placeholder="(*) Nhập email/phone ..." 
+                    value={this.state.email_phone}
+                    onChangeText={text => this.setState({ email_phone: text })}
                     returnKeyType="go"
-                    ref={(input) => this.phoneInput=input}
+                    ref={(input) => this.phonemailInput=input}
                     onSubmitEditing={()=> this.addressInput.focus()}
                 />
                 <TextInput 
                     style={inputStyle} 
-                    placeholder="Enter your address" 
+                    placeholder="Nhập địa chỉ ..." 
                     value={this.state.addr}
                     onChangeText={text => this.setState({ addr: text })}
                     returnKeyType="go"
@@ -111,7 +126,7 @@ export default class SignUp extends Component {
                 />
                 <TextInput 
                     style={inputStyle} 
-                    placeholder="Enter your password" 
+                    placeholder="(*) Nhập mật khẩu ..." 
                     value={this.state.password}
                     secureTextEntry
                     onChangeText={text => this.setState({ password: text })}
@@ -121,7 +136,7 @@ export default class SignUp extends Component {
                 />
                 <TextInput 
                     style={inputStyle} 
-                    placeholder="Re-enter your password" 
+                    placeholder="(*) Nhập lại mật khẩu ..." 
                     value={this.state.rePassword}
                     secureTextEntry
                     onChangeText={text => this.setState({ repassword: text })}
@@ -129,7 +144,7 @@ export default class SignUp extends Component {
                     ref={(input) => this.repasswordInput=input}
                 />
                 <TouchableOpacity style={bigButton} onPress={this.registerUser.bind(this)}>
-                    <Text style={buttonText}>SIGN UP NOW</Text>
+                    <Text style={buttonText}>Đăng ký ngay</Text>
                 </TouchableOpacity>
             </View>
         );

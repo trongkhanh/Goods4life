@@ -42,8 +42,9 @@ class Shop extends Component {
     componentDidMount(){
         initData()
         .then(resJSON =>{
-            const {type, product} = resJSON;
-            this.setState({types: type, topProducts: product});
+            const {data, product} = resJSON;
+            console.log("data: " + data);
+            this.setState({types: data, topProducts: product});
         });
         getCart()
         .then(cartArray => this.setState({cartArray}));
@@ -117,7 +118,7 @@ class Shop extends Component {
                     </TabNavigator.Item>
                     <TabNavigator.Item
                         selected={selectedTab === 'search'}
-                        title="Search"
+                        title="Tìm kiếm"
                         onPress={() => this.setState({ selectedTab: 'search' })}
                         renderIcon={() => <Image source={searchIcon} style={iconStyle} />}
                         renderSelectedIcon={() => <Image source={searchIconS} style={iconStyle} />}
@@ -128,7 +129,7 @@ class Shop extends Component {
 
                     <TabNavigator.Item
                         selected={selectedTab === 'notification'}
-                        title="Notification"
+                        title="Thông báo"
                         onPress={() => this.setState({ selectedTab: 'notification' })}
                         renderIcon={() => <Image source={notifiIcon} style={iconStyle} />}
                         renderSelectedIcon={() => <Image source={notifiIconS} style={iconStyle} />}
@@ -139,13 +140,13 @@ class Shop extends Component {
 
                     <TabNavigator.Item
                         selected={selectedTab === 'contact'}
-                        title="Contact"
+                        title="Tôi"
                         onPress={() => this.setState({ selectedTab: 'contact' })}
                         renderIcon={() => <Image source={contactIcon} style={iconStyle} />}
                         renderSelectedIcon={() => <Image source={contactIconS} style={iconStyle} />}
                         selectedTitleStyle={{ color: '#34B089', fontFamily: 'Avenir' }}
                     >
-                        <Contact />
+                        <Contact/>
                     </TabNavigator.Item>
                 </TabNavigator>
             </View>
