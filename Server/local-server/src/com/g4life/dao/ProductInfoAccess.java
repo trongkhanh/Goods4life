@@ -13,6 +13,7 @@ import org.hibernate.Transaction;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import com.g4life.common.ResponseCode;
 import com.g4life.dto.ProductInfo;
 import com.g4life.util.HibernateUtil;
 
@@ -129,15 +130,16 @@ public class ProductInfoAccess {
 			return null;
 		}
 	}
-	public void deleteProduct(ProductInfo data) {
+	public int deleteProduct(ProductInfo data) {
 		try {
 			Session session = HibernateUtil.getSessionFactory().openSession();
 			session.beginTransaction();
 			session.delete(data);
 			session.getTransaction().commit();
 			session.close();
+			return ResponseCode.SUCCESS_CODE;
 		} catch (HibernateException e) {
-			e.printStackTrace();
+			return ResponseCode.ERROR_SERVER_CODE;
 		}
 	}
 	public static void main(String[] args) {

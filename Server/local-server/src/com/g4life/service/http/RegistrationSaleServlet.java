@@ -45,26 +45,21 @@ public class RegistrationSaleServlet extends BaseServlet {
 			
 			//
 			JSONObject jsonObject = new JSONObject(data1);
-			System.out.println("data: "+ data1);
 			String info = jsonObject.get("sellerInfo").toString();
-			System.out.println("info: "+ info);
 			sellerInfo = gson.fromJson(info, SellerInfo.class);
 			String imageDataBefore = jsonObject.getString("idCardBefore");
 			String imageDataAfter = jsonObject.getString("idCardAfter");
 
-			System.out.println(imageDataBefore);
 			AccountController accController = new AccountController();
 			int result = accController.updateByBase64(imageDataAfter, imageDataBefore, sellerInfo);
 			JsonObject jsonObject1 = new JsonObject();
 			jsonObject1.addProperty("code", result);
 
 			if (sellerInfo != null) {
-				System.out.println("send seller info success");
 				responseRequest(resp, jsonObject1.toString());
 
 			}else {
 				returnBadRequest(resp, req);
-				System.out.println("error");
 			}
 		} catch (Exception e) {
 			// TODO: handle exception

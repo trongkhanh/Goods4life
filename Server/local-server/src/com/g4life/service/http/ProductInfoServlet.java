@@ -17,6 +17,7 @@
  */
 package com.g4life.service.http;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -75,20 +76,26 @@ public class ProductInfoServlet extends BaseServlet {
 		String functionName = req.getParameter("functionName");
 		ProductController productController = new ProductController();
 		ProductInfo productInfo = null;
-		String data = req.getHeader("data");
-		JSONObject jsonObject;
-		Gson gson = new Gson();
 		try {
+			// Get data from content of request
+			BufferedReader bufferedReader = req.getReader();
+			JSONObject jsonObject;
+			Gson gson = new Gson();
+			//convert content to string
+			String data = bufferedReader.readLine();
+			//Get product info
 			jsonObject = new JSONObject(data);
 			String info = jsonObject.get("productInfo").toString();
+			// Convert string to product info object
 			productInfo = gson.fromJson(info, ProductInfo.class);
+			
 			if (productInfo != null) {
 
 				if (functionName.equals(ValueConstant.UPDATE_PRODUCT_INFO)) {
-					InputStream inputStream = req.getInputStream();
-					if (inputStream != null) {
+					String productImageBase64 = jsonObject.getString("productImage").toString();
+					if (!productImageBase64.isEmpty()) {
 						int result = productController.updateProductInfo(
-								productInfo, inputStream);
+								productInfo, productImageBase64);
 						responseRequest(resp, String.valueOf(result));
 					} else {
 						returnBadRequest(resp, req);

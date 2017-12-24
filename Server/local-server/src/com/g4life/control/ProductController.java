@@ -1,14 +1,21 @@
 package com.g4life.control;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
 
 
+
+
+import javax.imageio.ImageIO;
+
+import com.g4life.common.Base64Coder;
 import com.g4life.common.ResponseCode;
 import com.g4life.common.json.HomeInfoJsonDoc;
 import com.g4life.dao.ProductInfoAccess;
@@ -34,21 +41,17 @@ public class ProductController {
 	}
 
 	public int updateProductInfo(ProductInfo productInfo,
-			InputStream productImage) {
+			String productImage) {
+		try{
 		// update data to database
 		ProductInfoAccess productInfoAccess = new ProductInfoAccess();
 		productInfoAccess.insertOrUpdate(productInfo);
 		// store image to data/image folder
-		File targetFile = new File("./data/product_image/"
+		Base64Coder base64Coder = new Base64Coder();
+		BufferedImage bufferedImageBefore = base64Coder.decodeToImage(productImage);
+		File file = new File("./data/product_image/"
 				+ productInfo.getImageName() + ".jpg");
-		try {
-			OutputStream outStream = new FileOutputStream(targetFile);
-			int read = 0;
-			byte[] bytes = new byte[1024];
-			while ((read = productImage.read(bytes)) != -1) {
-				outStream.write(bytes, 0, read);
-			}
-			outStream.close();
+		ImageIO.write(bufferedImageBefore, "JPEG", file);
 			return ResponseCode.SUCCESS_CODE;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -60,8 +63,16 @@ public class ProductController {
 	public int removeProductInfo(ProductInfo productInfo) {
 		// delete product in database
 		ProductInfoAccess productInfoAccess = new ProductInfoAccess();
-		productInfoAccess.deleteProduct(productInfo);
+		int result = productInfoAccess.deleteProduct(productInfo);
 		// delete product image in data folder
-		return ResponseCode.ERROR_SERVER_CODE;
+		File files = new File("./data/product_image/"
+				+ productInfo.getImageName() + ".jpg");
+		files.deleteOnExit();
+		return result;
+	}
+	public static void main(String[] args) {
+		File file = new File("E:/Startup/g4life/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/local-server/data/product_info/"
+				+ "nac_than" + ".jpg");
+		file.deleteOnExit();
 	}
 }

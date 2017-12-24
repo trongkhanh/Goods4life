@@ -17,11 +17,13 @@ import java.io.InputStream;
 
 
 
+
 import javax.imageio.ImageIO;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
+import com.g4life.common.Base64Coder;
 import com.g4life.common.ResponseCode;
 import com.g4life.common.ValueConstant;
 import com.g4life.common.json.JsonWebTokenAccount;
@@ -184,11 +186,12 @@ public class AccountController {
 
 	public int updateByBase64(String imageDataAfter, String imageDataBefore, SellerInfo sellerInfo) {
 		try {
-			BufferedImage bufferedImageBefore = decodeToImage(imageDataBefore);
+			Base64Coder base64Coder = new Base64Coder();
+			BufferedImage bufferedImageBefore = base64Coder.decodeToImage(imageDataBefore);
 			File file = new File("./data/id_card"+ sellerInfo.getIdCardImage() + "_before.jpg");
 			ImageIO.write(bufferedImageBefore, "JPEG", file);
 			
-			BufferedImage bufferedImageAfter = decodeToImage(imageDataAfter);
+			BufferedImage bufferedImageAfter = base64Coder.decodeToImage(imageDataAfter);
 			File fileAfter = new File("./data/id_card"+ sellerInfo.getIdCardImage() + "_after.jpg");
 			ImageIO.write(bufferedImageAfter, "JPEG", fileAfter);
 			// Insert data in seller_info table
@@ -204,45 +207,14 @@ public class AccountController {
 			return ResponseCode.ERROR_SERVER_CODE;
 		}
 	}
-	public static String encodeToString(BufferedImage image, String type) {
-        String imageString = null;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
- 
-        try {
-            ImageIO.write(image, type, bos);
-            byte[] imageBytes = bos.toByteArray();
- 
-            BASE64Encoder encoder = new BASE64Encoder();
-            imageString = encoder.encode(imageBytes);
- 
-            bos.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return imageString;
-    }
-	public static BufferedImage decodeToImage(String imageString) {
-
-        BufferedImage image = null;
-        byte[] imageByte;
-        try {
-            BASE64Decoder decoder = new BASE64Decoder();
-            imageByte = decoder.decodeBuffer(imageString);
-            ByteArrayInputStream bis = new ByteArrayInputStream(imageByte);
-            image = ImageIO.read(bis);
-            bis.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return image;
-    }
 	
 	public static void main(String[] args) {
 		AccountController accountController = new AccountController();
 		try {
 			BufferedImage image = ImageIO.read(new File("E:/data/id_card/seller_01.jpg"));
-			String result = accountController.encodeToString(image, "jpg");
-			BufferedImage bufferedImage = accountController.decodeToImage(result);
+			Base64Coder base64Coder = new Base64Coder();
+			String result = base64Coder.encodeToString(image, "jpg");
+			BufferedImage bufferedImage = base64Coder.decodeToImage(result);
 			File file = new File("E:/data/id_card/seller_02.jpg");
 			ImageIO.write(bufferedImage, "JPEG", file);
 			System.out.println(result);
