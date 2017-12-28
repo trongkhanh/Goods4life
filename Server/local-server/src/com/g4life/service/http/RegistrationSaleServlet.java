@@ -51,7 +51,7 @@ public class RegistrationSaleServlet extends BaseServlet {
 			String imageDataAfter = jsonObject.getString("idCardAfter");
 
 			AccountController accController = new AccountController();
-			int result = accController.updateByBase64(imageDataAfter, imageDataBefore, sellerInfo);
+			int result = accController.registrationSale(imageDataAfter, imageDataBefore, sellerInfo);
 			JsonObject jsonObject1 = new JsonObject();
 			jsonObject1.addProperty("code", result);
 

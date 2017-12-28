@@ -61,6 +61,7 @@ public class ProductInfoServlet extends BaseServlet {
 		String result = "";
 		switch (functionName) {
 		case ValueConstant.HOME_PRO_INFO:
+			System.out.println("get home infos");
 			result = productController.getHomeProductInfo();
 			responseRequest(response, result);
 			break;

@@ -6,17 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-
-
-
-
-
-
-
-
-
-
-
+import java.util.Random;
 
 import javax.imageio.ImageIO;
 
@@ -46,17 +36,16 @@ public class AccountController {
 			// sign up by mail
 			// check mail exist or not
 			String mail = accountInfo.getMail();
-			System.out.println("mail:"+ mail);
+			System.out.println("mail:" + mail);
 			if (access.getByMail(mail) == null) {
 				access.insertOrUpdate(accountInfo);
 				// send code to email
-				String code = "123456";
+				String code = String.valueOf(randomCode());
 				sendConfirmCodeIF = new SendToEmail();
 				sendConfirmCodeIF.sendCodeToAddress(mail, code);
 				return ResponseCode.SUCCESS_CODE;
 			}
-		} else if (accountInfo.getPhoneNumber() != null
-				&& !accountInfo.getPhoneNumber().isEmpty()) {
+		} else if (accountInfo.getPhoneNumber() != null && !accountInfo.getPhoneNumber().isEmpty()) {
 			// sign up by phone number
 			// check phone exist or not
 			String phone = accountInfo.getPhoneNumber();
@@ -111,15 +100,11 @@ public class AccountController {
 		AccountInfoAccess accountInfoAccess = new AccountInfoAccess();
 		String result = "";
 		if (accountInfo.getMail() != null) {
-			AccountInfo account = accountInfoAccess.getByMail(accountInfo
-					.getMail());
-			result = jsonAccount.createJWT(account,
-					ValueConstant.SING_IN_BY_MAIL);
+			AccountInfo account = accountInfoAccess.getByMail(accountInfo.getMail());
+			result = jsonAccount.createJWT(account, ValueConstant.SING_IN_BY_MAIL);
 		} else if (accountInfo.getPhoneNumber() != null) {
-			AccountInfo account = accountInfoAccess
-					.getByPhoneNumber(accountInfo.getPhoneNumber());
-			result = jsonAccount.createJWT(account,
-					ValueConstant.SING_IN_BY_PHONE);
+			AccountInfo account = accountInfoAccess.getByPhoneNumber(accountInfo.getPhoneNumber());
+			result = jsonAccount.createJWT(account, ValueConstant.SING_IN_BY_PHONE);
 		}
 		return result;
 	}
@@ -131,32 +116,35 @@ public class AccountController {
 		return accountInfo;
 	}
 
-	public int registrationSale(SellerInfo sellerInfo, InputStream inputStream) {
-		// Insert data in seller_info table
-		SellerInfoAccess sellerInfoAccess = new SellerInfoAccess();
-		if (sellerInfoAccess.insertOrUpdate(sellerInfo)) {
-			return ResponseCode.SUCCESS_CODE;
-		} else {
-			return ResponseCode.ERROR_SERVER_CODE;
-		}
-	}
+//	public int registrationSale(SellerInfo sellerInfo, InputStream inputStream) {
+//		// Insert data in seller_info table
+//		SellerInfoAccess sellerInfoAccess = new SellerInfoAccess();
+//		if (sellerInfoAccess.insertOrUpdate(sellerInfo)) {
+//			return ResponseCode.SUCCESS_CODE;
+//		} else {
+//			return ResponseCode.ERROR_SERVER_CODE;
+//		}
+//	}
 
 	public String forgetPassword(AccountInfo accountInfo, int type) {
 		String result = "";
 		String addr = "";
 		SendConfirmCodeIF sendConfirmCodeIF = null;
+		AccountInfo account = null;
+		AccountInfoAccess accountInfoAccess = new AccountInfoAccess();
 		if (type == ValueConstant.SING_IN_BY_MAIL) {
-			// TODO Get confirm code
 			// Send confirm code to email and client
 			sendConfirmCodeIF = new SendToEmail();
 			addr = accountInfo.getMail();
-
+			account = accountInfoAccess.getByMail(addr);
 		} else if (type == ValueConstant.SING_IN_BY_PHONE) {
 			sendConfirmCodeIF = new SendToPhone();
 			addr = accountInfo.getPhoneNumber();
+			account = accountInfoAccess.getByPhoneNumber(addr);
 		}
-		if (sendConfirmCodeIF != null) {
-			String code = "123456";
+		//Check account info exist in database		
+		if (sendConfirmCodeIF != null && account != null) {
+			String code = String.valueOf(randomCode());
 			sendConfirmCodeIF.sendCodeToAddress(addr, code);
 			JsonObject jsonObject = new JsonObject();
 			jsonObject.addProperty("code", ResponseCode.SUCCESS_CODE);
@@ -165,10 +153,11 @@ public class AccountController {
 		} else {
 			JsonObject jsonObject = new JsonObject();
 			jsonObject.addProperty("code", ResponseCode.ERROR_SERVER_CODE);
+			result = jsonObject.toString();
 		}
 		return result;
 	}
-	
+
 	public String updateAccountInfo(AccountInfo accountInfo) {
 		String result = "";
 		AccountInfoAccess access = new AccountInfoAccess();
@@ -180,19 +169,17 @@ public class AccountController {
 		jsonObject.addProperty("jwt", jwt);
 		result = jsonObject.toString();
 		return result;
-		
-		
 	}
 
-	public int updateByBase64(String imageDataAfter, String imageDataBefore, SellerInfo sellerInfo) {
+	public int registrationSale(String imageDataAfter, String imageDataBefore, SellerInfo sellerInfo) {
 		try {
 			Base64Coder base64Coder = new Base64Coder();
 			BufferedImage bufferedImageBefore = base64Coder.decodeToImage(imageDataBefore);
-			File file = new File("./data/id_card"+ sellerInfo.getIdCardImage() + "_before.jpg");
+			File file = new File(getParentPath()+ "/data/id_card" + sellerInfo.getIdCardImage() + "_before.jpg");
 			ImageIO.write(bufferedImageBefore, "JPEG", file);
-			
+
 			BufferedImage bufferedImageAfter = base64Coder.decodeToImage(imageDataAfter);
-			File fileAfter = new File("./data/id_card"+ sellerInfo.getIdCardImage() + "_after.jpg");
+			File fileAfter = new File(getParentPath()+"/data/id_card" + sellerInfo.getIdCardImage() + "_after.jpg");
 			ImageIO.write(bufferedImageAfter, "JPEG", fileAfter);
 			// Insert data in seller_info table
 			SellerInfoAccess sellerInfoAccess = new SellerInfoAccess();
@@ -207,21 +194,39 @@ public class AccountController {
 			return ResponseCode.ERROR_SERVER_CODE;
 		}
 	}
-	
-	public static void main(String[] args) {
-		AccountController accountController = new AccountController();
-		try {
-			BufferedImage image = ImageIO.read(new File("E:/data/id_card/seller_01.jpg"));
-			Base64Coder base64Coder = new Base64Coder();
-			String result = base64Coder.encodeToString(image, "jpg");
-			BufferedImage bufferedImage = base64Coder.decodeToImage(result);
-			File file = new File("E:/data/id_card/seller_02.jpg");
-			ImageIO.write(bufferedImage, "JPEG", file);
-			System.out.println(result);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+
+	private int randomCode(){
+		int defaultValue = 123456;
+		Random randomGenerator = new Random();
+		for (int idx = 1; idx <= 100; ++idx){
+			int randomInt = randomGenerator.nextInt(1000000);
+			if (randomInt >100000) {
+				return randomInt;
+			}
 		}
-		
+		return 	defaultValue;
+	}
+	private static String getParentPath() {
+		String path = AccountController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		File file = new File(path).getParentFile().getParentFile();
+		return file.getAbsolutePath();
+
+	}
+	public static void main(String[] args) {
+//		AccountController accountController = new AccountController();
+//		accountController.getParentPath();
+		//		try {
+//			BufferedImage image = ImageIO.read(new File("D:/data/id_card/seller_01.jpg"));
+//			Base64Coder base64Coder = new Base64Coder();
+//			String result = base64Coder.encodeToString(image, "jpg");
+//			BufferedImage bufferedImage = base64Coder.decodeToImage(result);
+//			File file = new File("D:/data/id_card/seller_test.jpg");
+//			ImageIO.write(bufferedImage, "JPEG", file);
+//			System.out.println(result);
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		 
 	}
 }

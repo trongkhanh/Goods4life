@@ -49,7 +49,7 @@ public class ProductController {
 		// store image to data/image folder
 		Base64Coder base64Coder = new Base64Coder();
 		BufferedImage bufferedImageBefore = base64Coder.decodeToImage(productImage);
-		File file = new File("./data/product_image/"
+		File file = new File(getParentPath()+"/data/product_image/"
 				+ productInfo.getImageName() + ".jpg");
 		ImageIO.write(bufferedImageBefore, "JPEG", file);
 			return ResponseCode.SUCCESS_CODE;
@@ -65,14 +65,20 @@ public class ProductController {
 		ProductInfoAccess productInfoAccess = new ProductInfoAccess();
 		int result = productInfoAccess.deleteProduct(productInfo);
 		// delete product image in data folder
-		File files = new File("./data/product_image/"
+		File files = new File(getParentPath()+"/data/product_image/"
 				+ productInfo.getImageName() + ".jpg");
 		files.deleteOnExit();
 		return result;
 	}
 	public static void main(String[] args) {
-		File file = new File("E:/Startup/g4life/workspace/.metadata/.plugins/org.eclipse.wst.server.core/tmp0/wtpwebapps/local-server/data/product_info/"
+		File file = new File(getParentPath()+ "/data/product_info/"
 				+ "nac_than" + ".jpg");
 		file.deleteOnExit();
+	}
+	private static String getParentPath() {
+		String path = ProductController.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+		File file = new File(path).getParentFile().getParentFile();
+		return file.getAbsolutePath();
+
 	}
 }

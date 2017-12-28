@@ -1,5 +1,6 @@
 package com.g4life.service.http;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -36,7 +37,8 @@ public class AccountInfoServlet extends BaseServlet {
 		String functionName = req.getParameter("functionName");
 		AccountController accountController = new AccountController();
 		String result = "";
-		String data = req.getHeader("data");
+		BufferedReader bufferedReader = req.getReader();
+		String data = bufferedReader.readLine();
 		JSONObject jsonObject;
 		try {
 			jsonObject = new JSONObject(data);
