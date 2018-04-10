@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { View, Text, TouchableOpacity, Image, FlatList, Dimensions } from 'react-native';
 
-import dataStore from '../../../api/dataStore';
+import dataStore from '../../../api/dataIconStore.js';
 
 const urlIconStoreFollow = require('../../../images/icons/storeFollow.png');
 
